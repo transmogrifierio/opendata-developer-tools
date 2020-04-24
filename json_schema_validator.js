@@ -312,9 +312,6 @@ export function validate(data, schema)
     {
         const messages = check("", null, data, schema);
 
-        resolve({
-            messages: messages,
-            data: data
-        });
+        resolve(messages));
     });
 }
