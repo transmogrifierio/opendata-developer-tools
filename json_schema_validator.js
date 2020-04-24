@@ -312,6 +312,6 @@ export function validate(data, schema)
     {
         const messages = check("", null, data, schema);
 
-        resolve(messages));
+        resolve(messages);
     });
 }
