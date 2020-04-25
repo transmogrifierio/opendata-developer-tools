@@ -92,12 +92,13 @@ function download(dowloads)
 
 async function main(argv)
 {
-    const database   = readJSONFromFile("./database.json");
-    const locality   = argv[0];  // "CA/BC/Metro Vancouver Regional District/New Westminster"
-    const type       = argv[1];  // "Public Art"
-    const language   = argv[2];  // ES6
-    const fromFormat = argv[3];  // json
-    const toFormat   = argv[4];  // json
+    const locality     = argv[0];  // "CA/BC/Metro Vancouver Regional District/New Westminster"
+    const type         = argv[1];  // "Public Art"
+    const language     = argv[2];  // ES6
+    const fromFormat   = argv[3];  // json
+    const toFormat     = argv[4];  // json
+    const databaseFile = argv.length > 5 ? argv[5] : "./database.json"
+    const database     = readJSONFromFile(databaseFile);
 
     const {entryPath, filterPath, schemaPath, validatorPath, filesPath} = createPaths(locality, type, fromFormat, toFormat, language);
 
