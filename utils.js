@@ -17,51 +17,56 @@ function readJSONFromFile(file)
 // https://github.com/dchester/jsonpath
 function getEntryPath(locality, type, fromFormat)
 {
+    const filePath = `data/${locality}/${type}.${fromFormat}`;
+    let path = '$.filters';
     const values = locality.split('/');
-    let entryPath = '$.filters';
 
     values.forEach((value) =>
     {
-        entryPath += `['${value}']`;
+        path += `['${value}']`;
     });
 
-    entryPath += `.data['${type}']`
-    entryPath += `['${fromFormat}']`
+    path += `.data['${type}']`
+    path += `['${fromFormat}']`
 
-    return entryPath;
+    return {filePath, path};
 }
 
-function getFilterPath(toFormat, language)
+function getFilterPath(locality, type, fromFormat, toFormat, language)
 {
-    const filterPath = `$.filters['${toFormat}'][?(@.language == '${language}')]`;
+    const filePath = `filters/${locality}/Filter-${type}-${fromFormat}-to-${toFormat}.js`;
+    const path = `$.filters['${toFormat}'][?(@.language == '${language}')]`;
 
-    return filterPath;
+    return {filePath, path};
 }
 
 function getSchemaPath(type, toFormat)
 {
-    const schemaPath = `$.schemas['${toFormat}']['${type}']`;
+    const filePath = `schemas/${type}.${toFormat}`;
+    const path = `$.schemas['${toFormat}']['${type}']`;
 
-    return schemaPath;
+    return {filePath, path};
 }
 
 function getValidatorPath(toFormat)
 {
-    const validatorPath = `$.validators['${toFormat}']`;
+    const filePath = `json_schema_validator.js`;
+    const path = `$.validators['${toFormat}']`;
 
-    return validatorPath;
+    return {filePath, path};
 }
 
 function getFilesPath(language)
 {
-    const filesPath = `$.filters.files['${language}']`;
+    const filePath = `${language}`;
+    const path = `$.filters.files['${language}']`;
 
-    return filesPath;
+    return {filePath, path};
 }
 
 async function downloadToFile(url, path)
 {
-    const writer = fs.createWriteStream(path)
+    const writer = fs.createWriteStream(path);
     const response = await Axios(
         {
             url,
@@ -74,64 +79,76 @@ async function downloadToFile(url, path)
     return new Promise((resolve, reject) =>
     {
         writer.on('finish', () => { resolve(path); });
-        writer.on('error', reject)
-    })
+        writer.on('error', (error) => { reject(error) } );
+    });
 }
 
-function download(dowloads)
+function download(downloads, forceDownload, clearCache)
 {
     const promises = [];
     const dir = Path.resolve('./', '.files');
+
+    if(clearCache)
+    {
+        fs.rmdirSync(dir, {recursive: true});
+    }
 
     if(!(fs.existsSync(dir)))
     {
         fs.mkdirSync(dir);
     }
 
-    dowloads.forEach((info) =>
+    downloads.forEach((info) =>
     {
-        if(typeof info === 'string')
+        const path = Path.resolve('./', '.files', info.path);
+
+        if(!(fs.existsSync(Path.dirname(path))))
         {
-            const urlPath  = URL.parse(info).pathname;
-            const fileName = Path.basename(urlPath);
-            const path     = Path.resolve('./', '.files', fileName);
-
-            promises.push(downloadToFile(info, path));
+            fs.mkdirSync(Path.dirname(path), {recursive: true});
         }
-        else
-        {
-            const path = Path.resolve('./', '.files', info.path);
 
-            if(!(fs.existsSync(Path.dirname(path))))
-            {
-                fs.mkdirSync(Path.dirname(path), {recursive: true});
-            }
-
-            promises.push(downloadToFile(info.url, path));
-        }
+        promises.push(downloadToFile(info.url, path));
     });
 
     return Promise.all(promises);
 }
 
-export default async function performValidation(locality, type, fromFormat, toFormat, language, databaseFile)
+export default async function performValidation(locality, type, fromFormat, toFormat, language, databaseFile, forceDownload, clearCache)
 {
-    const entryPath = getEntryPath(locality, type, fromFormat);
-    const filterPath = getFilterPath(toFormat, language);
-    const schemaPath = getSchemaPath(type, toFormat);
-    const validatorPath = getValidatorPath(toFormat);
-    const filesPath = getFilesPath(language);
-    const database = readJSONFromFile(databaseFile);
-    const entry        = jasonpath.query(database, entryPath)[0];
-    const filterEntry  = jasonpath.query(entry, filterPath)[0];
-    const schemaURL    = jasonpath.query(database, schemaPath)[0];
-    const validatorURL = jasonpath.query(database, validatorPath)[0];
-    const files        = jasonpath.query(database, filesPath)[0];
-    const sourceURL    = entry.url;
-    const filterURL    = filterEntry;
-    const data         = {};
+    const entryInfo     = getEntryPath(locality, type, fromFormat);
+    const filterInfo    = getFilterPath(locality, type, fromFormat, toFormat, language);
+    const schemaInfo    = getSchemaPath(type, toFormat);
+    const validatorInfo = getValidatorPath(toFormat);
+    const filesInfo     = getFilesPath(language);
+    const database      = readJSONFromFile(databaseFile);
+    const entry         = jasonpath.query(database, entryInfo.path)[0];
+    const filterEntry   = jasonpath.query(entry, filterInfo.path)[0].url;
+    const schemaURL     = jasonpath.query(database, schemaInfo.path)[0];
+    const validatorURL  = jasonpath.query(database, validatorInfo.path)[0];
+    const files         = jasonpath.query(database, filesInfo.path)[0];
+    const sourceURL     = entry.url;
+    const filterURL     = filterEntry;
+    const data          = {};
+    const fileEntries   = [];
 
-    return download([sourceURL, filterURL, schemaURL, validatorURL, ...files])
+    files.forEach((file) =>
+    {
+        const parts = URL.parse(file);
+        let filePath = parts.path;
+
+        filePath = filePath.substring(filePath.lastIndexOf("/") + 1);
+        filePath = `filters/${filePath}`;
+        fileEntries.push({url: file, path: filePath });
+    });
+
+    return download([
+        { url: sourceURL,   path: entryInfo.filePath     },
+        { url: filterURL,   path: filterInfo.filePath    },
+        { url: schemaURL,   path: schemaInfo.filePath    },
+        { url: validatorURL,path: validatorInfo.filePath },
+        ...fileEntries],
+        forceDownload,
+        clearCache)
     .then(async (downloads) =>
     {
         const sourceDownload    = downloads[0];

@@ -1,17 +1,28 @@
 "use strict";
 
 import performValidation from './utils.js';
+import Getopt from 'node-getopt';
 
 function main(argv)
 {
-    const locality     = argv[0]; // "CA/BC/Metro Vancouver Regional District/New Westminster"
-    const type         = argv[1]; // "Public Art"
-    const fromFormat   = argv[2]; // json
-    const toFormat     = argv[3]; // json
-    const language     = argv[4]; // ES6
-    const databaseFile = argv.length > 5 ? argv[5] : "./database.json";
+    const getopt = new Getopt([
+        ['d', 'database=ARG', 'database path', './database.json'],
+        ['c', 'clear-cache', 'delete the .files directory'],
+        ['f', 'force-download', 'do not check timestamp'],
+        ['h' , 'help']
+    ]).bindHelp();
 
-    performValidation(locality, type, fromFormat, toFormat, language, databaseFile)
+    const opt           = getopt.parse(argv);
+    const locality      = opt.argv[0]; // "CA/BC/Metro Vancouver Regional District/New Westminster"
+    const type          = opt.argv[1]; // "Public Art"
+    const fromFormat    = opt.argv[2]; // json
+    const toFormat      = opt.argv[3]; // json
+    const language      = opt.argv[4]; // ES6
+    const databaseFile  = opt.options.database;
+    const forceDownload = opt.options.hasOwnProperty("f");
+    const clearCache    = opt.options.hasOwnProperty("c");
+
+    performValidation(locality, type, fromFormat, toFormat, language, databaseFile, forceDownload, clearCache)
     .then((data) =>
     {
         console.log(`${data.messages.length} messages`);
