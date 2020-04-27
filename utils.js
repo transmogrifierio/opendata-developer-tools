@@ -116,7 +116,6 @@ function isExpired(path, options)
 
 async function downloadToFile(url, path)
 {
-    console.log("downloading " + path);
     const writer = fs.createWriteStream(path);
     const response = await Axios(
         {

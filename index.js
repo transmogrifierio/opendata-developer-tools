@@ -8,7 +8,7 @@ function main(argv)
     const getopt = new Getopt([
         [ 'd', 'database=ARG',       'database path'],
         [ 'c', 'clear-cache',        'delete the .files directory'],
-        [ 'f', 'force-download=ARG', 'do not check timestamp for files [all,data,filters,schemas,validators'],
+        [ 'f', 'force-download=ARG+', 'do not check timestamp for files [all,data,filters,schemas,validators'],
         [ '', 'help']
     ]).bindHelp();
 
@@ -28,7 +28,7 @@ function main(argv)
 
     if(opt.options.hasOwnProperty("force-download"))
     {
-        const downloads = opt.options["force-download"].split(",");
+        const downloads = opt.options["force-download"];
 
         if(downloads.indexOf("all") > -1 ||
             downloads.indexOf("data") > -1)
@@ -62,7 +62,7 @@ function main(argv)
 
         data.messages.forEach((message) =>
         {
-            console.log(message);
+            console.log(`${message.level} : ${message.message}`);
         });
     })
     .catch((error) =>
