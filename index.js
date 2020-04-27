@@ -28,7 +28,7 @@ function main(argv)
         databaseFile = "./database.json";
     }
 
-    const options       = { };
+    const options = { };
 
     if(opt.options.hasOwnProperty("clear-cache"))
     {

@@ -198,6 +198,11 @@ function getFiles(entries, options)
 
 export default async function performValidation(locality, type, fromFormat, toFormat, language, databaseFile, options)
 {
+    if(!(fs.existsSync(databaseFile)))
+    {
+        throw `${databaseFile} does not exist`;
+    }
+
     const entryInfo     = getEntryPath(locality, type, fromFormat);
     const filterInfo    = getFilterPath(locality, type, fromFormat, toFormat, language);
     const schemaInfo    = getSchemaPath(type, toFormat);
