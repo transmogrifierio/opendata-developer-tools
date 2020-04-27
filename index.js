@@ -6,7 +6,6 @@ import Getopt from 'node-getopt';
 function main(argv)
 {
     const getopt = new Getopt([
-        [ 'd', 'database=ARG',       'database path'],
         [ 'c', 'clear-cache',        'delete the .files directory'],
         [ 'f', 'force-download=ARG+', 'do not check timestamp for files [all,data,filters,schemas,validators'],
         [ '', 'help']
@@ -18,7 +17,17 @@ function main(argv)
     const fromFormat    = opt.argv[2]; // json
     const toFormat      = opt.argv[3]; // json
     const language      = opt.argv[4]; // ES6
-    const databaseFile  = opt.options.database;
+    let databaseFile    = null;
+
+    if(opt.argv.length > 5)
+    {
+        databaseFile = opt.argv[5]; // database.json
+    }
+    else
+    {
+        databaseFile = "./database.json";
+    }
+
     const options       = { };
 
     if(opt.options.hasOwnProperty("clear-cache"))
