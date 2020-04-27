@@ -12,7 +12,8 @@
   "dependencies": {
     "axios": "^0.19.2",
     "jsonpath": "^1.0.2",
-    "path": "^0.12.7",
-    "node-getopt": "^0.3.2"
+    "moment": "^2.24.0",
+    "node-getopt": "^0.3.2",
+    "path": "^0.12.7"
   }
 }

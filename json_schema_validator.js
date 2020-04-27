@@ -62,7 +62,7 @@ function checkObject(path, name, object, schema)
             {
                 const keyName = makeKeyName(path, propertyName);
 
-                messages.push(`unexpected key ${keyName}`);
+                messages.push({ level: "Warning", message: `unexpected key ${keyName}` });
             }
         });
 
@@ -72,7 +72,7 @@ function checkObject(path, name, object, schema)
             {
                 const keyName = makeKeyName(path, propertyName);
 
-                messages.push(`missing required key ${keyName}`);
+                messages.push({ level: "Error", message: `missing required key ${keyName}` });
             }
         });
 
@@ -96,11 +96,11 @@ function checkObject(path, name, object, schema)
 
         if(keyName)
         {
-            messages.push(`${keyName} must be an object`);
+            messages.push({ level: "Error", message: `${keyName} must be an object` });
         }
         else
         {
-            messages.push(`must start with an object`);
+            messages.push({ level: "Error", message: `must start with an object` });
         }
     }
 
@@ -118,7 +118,7 @@ function checkArray(path, name, array, schema)
         {
             if(array.length > schema.maxItems)
             {
-                messages.push(`${keyName}: ${array} must have at most ${schema.maxItems} items`);
+                messages.push({ level: "Error", message: `${keyName}: ${array} must have at most ${schema.maxItems} items` });
             }
         }
 
@@ -126,7 +126,7 @@ function checkArray(path, name, array, schema)
         {
             if(array.length < schema.minItems)
             {
-                messages.push(`${keyName}: ${array} must have at least ${schema.minItems} items`);
+                messages.push({ level: "Error", message: `${keyName}: ${array} must have at least ${schema.minItems} items` });
             }
         }
 
@@ -157,7 +157,7 @@ function checkArray(path, name, array, schema)
     }
     else
     {
-        messages.push(`${keyName} must be an array`);
+        messages.push({ level: "Error", message: `${keyName} must be an array` });
     }
 
     return messages;
@@ -171,7 +171,7 @@ function checkNumber(path, name, num, schema)
 
     if(Number.isNaN(num))
     {
-        messages.push(`${keyName} must be a number`);
+        messages.push({ level: "Error", message: `${keyName} must be a number` });
     }
     else
     {
@@ -184,7 +184,7 @@ function checkNumber(path, name, num, schema)
         {
             if(num > schema.maximum)
             {
-                messages.push(`${keyName}: ${num} must be <= ${schema.maximum}`);
+                messages.push({ level: "Error", message: `${keyName}: ${num} must be <= ${schema.maximum}` });
             }
         }
 
@@ -192,7 +192,7 @@ function checkNumber(path, name, num, schema)
         {
             if(num >= schema.exclusiveMaximum)
             {
-                messages.push(`${keyName}: ${num} must be < ${schema.exclusiveMaximum}`);
+                messages.push({ level: "Error", message: `${keyName}: ${num} must be < ${schema.exclusiveMaximum}` });
             }
         }
 
@@ -208,7 +208,7 @@ function checkNumber(path, name, num, schema)
         {
             if(num >= schema.exclusiveMinimum)
             {
-                messages.push(`${keyName}: ${num} must be > ${schema.exclusiveMinimum}`);
+                messages.push({ level: "Error", message: `${keyName}: ${num} must be > ${schema.exclusiveMinimum}` });
             }
         }
 
@@ -216,7 +216,7 @@ function checkNumber(path, name, num, schema)
         {
             if(!(schema.enum.includes(num)))
             {
-                messages.push(`${keyName} must be one of: ${schema.enum}`)
+                messages.push({ level: "Error", message: `${keyName} must be one of: ${schema.enum}` });
             }
         }
 
@@ -240,7 +240,7 @@ function checkString(path, name, str, schema)
         {
             if(str.length < schema.minLength)
             {
-                messages.push(`${keyName}: ${str} must be at least ${schema.minLength} characters`);
+                messages.push({ level: "Error", message: `${keyName}: ${str} must be at least ${schema.minLength} characters` });
             }
         }
 
@@ -248,7 +248,7 @@ function checkString(path, name, str, schema)
         {
             if(str.length > schema.maxLength)
             {
-                messages.push(`${keyName}: ${str} must be at smaller than ${schema.maxLength} characters`);
+                messages.push({ level: "Error", message: `${keyName}: ${str} must be at smaller than ${schema.maxLength} characters` });
             }
         }
 
@@ -256,7 +256,7 @@ function checkString(path, name, str, schema)
         {
             if(str.search(schema.pattern))
             {
-                messages.push(`${keyName}: ${str} must match pattern: ${schema.pattern}`);
+                messages.push({ level: "Error", message: `${keyName}: ${str} must match pattern: ${schema.pattern}` });
             }
         }
 
@@ -264,7 +264,7 @@ function checkString(path, name, str, schema)
         {
             if(!(schema.enum.includes(str)))
             {
-                messages.push(`${keyName} must be one of: ${schema.enum}`)
+                messages.push({ level: "Error", message: `${keyName} must be one of: ${schema.enum}` });
             }
         }
 
@@ -275,7 +275,7 @@ function checkString(path, name, str, schema)
     }
     else
     {
-        messages.push(`${keyName} must be a string: ${JSON.stringify(str, null, 4)}`);
+        messages.push({ level: "Error", message: `${keyName} must be a string: ${JSON.stringify(str, null, 4)}` });
     }
 
     return messages;

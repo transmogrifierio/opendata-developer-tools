@@ -5,6 +5,7 @@ import URL from 'url';
 import jasonpath from 'jsonpath';
 import Axios from 'axios';
 import Path from 'path';
+import moment from 'moment';
 
 function readJSONFromFile(file)
 {
@@ -50,7 +51,8 @@ function getSchemaPath(type, toFormat)
 
 function getValidatorPath(toFormat)
 {
-    const filePath = `json_schema_validator.js`;
+    // TODO: this doesn't work long-term
+    const filePath = `validators/json_schema_validator.js`;
     const path = `$.validators['${toFormat}']`;
 
     return {filePath, path};
@@ -64,8 +66,55 @@ function getFilesPath(language)
     return {filePath, path};
 }
 
+function isExpired(path, options)
+{
+    let retVal;
+
+    if(fs.existsSync(path))
+    {
+        const stat    = fs.statSync(path);
+        const mtime   = stat.mtime;
+        const then    = moment(mtime);
+        const now     = moment();
+        const aDayAgo = then.isBefore(now, 'day');
+
+        if(aDayAgo)
+        {
+            retVal = true;
+        }
+        else
+        {
+            retVal = false;
+
+            if(path.indexOf(".files/data/") > -1 && options.clearData)
+            {
+                retVal = true;
+            }
+            else if(path.indexOf(".files/filters/") > -1 && options.clearFilters)
+            {
+                retVal = true;
+            }
+            else if(path.indexOf(".files/schemas/") > -1 && options.clearSchemas)
+            {
+                retVal = true;
+            }
+            else if(path.indexOf(".files/validators/") > -1 && options.clearValidators)
+            {
+                retVal = true;
+            }
+        }
+    }
+    else
+    {
+        retVal = true;
+    }
+
+    return retVal;
+}
+
 async function downloadToFile(url, path)
 {
+    console.log("downloading " + path);
     const writer = fs.createWriteStream(path);
     const response = await Axios(
         {
@@ -83,12 +132,12 @@ async function downloadToFile(url, path)
     });
 }
 
-function download(downloads, forceDownload, clearCache)
+function download(downloads, options)
 {
     const promises = [];
     const dir = Path.resolve('./', '.files');
 
-    if(clearCache)
+    if(options.clearCache)
     {
         fs.rmdirSync(dir, {recursive: true});
     }
@@ -107,13 +156,28 @@ function download(downloads, forceDownload, clearCache)
             fs.mkdirSync(Path.dirname(path), {recursive: true});
         }
 
-        promises.push(downloadToFile(info.url, path));
+        const add = isExpired(path, options);
+        let promise = null;
+
+        if(add)
+        {
+            promise = downloadToFile(info.url, path);
+        }
+        else
+        {
+            promise = new Promise((resolve, reject) =>
+            {
+                resolve(path);
+            });
+        }
+
+        promises.push(promise);
     });
 
     return Promise.all(promises);
 }
 
-export default async function performValidation(locality, type, fromFormat, toFormat, language, databaseFile, forceDownload, clearCache)
+export default async function performValidation(locality, type, fromFormat, toFormat, language, databaseFile, options)
 {
     const entryInfo     = getEntryPath(locality, type, fromFormat);
     const filterInfo    = getFilterPath(locality, type, fromFormat, toFormat, language);
@@ -142,13 +206,12 @@ export default async function performValidation(locality, type, fromFormat, toFo
     });
 
     return download([
-        { url: sourceURL,   path: entryInfo.filePath     },
-        { url: filterURL,   path: filterInfo.filePath    },
-        { url: schemaURL,   path: schemaInfo.filePath    },
-        { url: validatorURL,path: validatorInfo.filePath },
+        { url: sourceURL,    path: entryInfo.filePath     },
+        { url: filterURL,    path: filterInfo.filePath    },
+        { url: schemaURL,    path: schemaInfo.filePath    },
+        { url: validatorURL, path: validatorInfo.filePath },
         ...fileEntries],
-        forceDownload,
-        clearCache)
+        options)
     .then(async (downloads) =>
     {
         const sourceDownload    = downloads[0];
