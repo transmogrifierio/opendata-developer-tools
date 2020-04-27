@@ -7,6 +7,8 @@ import Axios from 'axios';
 import Path from 'path';
 import moment from 'moment';
 
+const DAY_IN_SECONDS = 24 * 60 * 60;
+
 function readJSONFromFile(file)
 {
     let rawData = fs.readFileSync(file, 'utf8');
@@ -72,13 +74,13 @@ function isExpired(path, options)
 
     if(fs.existsSync(path))
     {
-        const stat    = fs.statSync(path);
-        const mtime   = stat.mtime;
-        const then    = moment(mtime);
-        const now     = moment();
-        const aDayAgo = then.isBefore(now, 'day');
+        const stat  = fs.statSync(path);
+        const mtime = stat.mtime;
+        const then  = moment(mtime);
+        const now   = moment();
+        const hours = then.diff(now, 'seconds');
 
-        if(aDayAgo)
+        if(hours >= DAY_IN_SECONDS)
         {
             retVal = true;
         }

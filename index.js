@@ -8,7 +8,7 @@ function main(argv)
     const getopt = new Getopt([
         [ 'd', 'database=ARG',       'database path'],
         [ 'c', 'clear-cache',        'delete the .files directory'],
-        [ 'f', 'force-download=ARG', 'do not check timestamp for files'],
+        [ 'f', 'force-download=ARG', 'do not check timestamp for files [all,data,filters,schemas,validators'],
         [ '', 'help']
     ]).bindHelp();
 
