@@ -133,14 +133,25 @@ async function downloadToFile(url, path)
     });
 }
 
-function download(downloads, options)
+async function copyToFile(url, path)
+{
+    return new Promise((resolve, reject) =>
+    {
+        const file = url.substring("file://".length);
+
+        fs.copyFileSync(file, path);
+        resolve(path);
+    });
+}
+
+function getFiles(entries, options)
 {
     const promises = [];
     const dir = Path.resolve('./', '.files');
 
     if(options.clearCache)
     {
-        fs.rmdirSync(dir, {recursive: true});
+        fs.rmdirSync(dir, { recursive: true });
     }
 
     if(!(fs.existsSync(dir)))
@@ -148,28 +159,35 @@ function download(downloads, options)
         fs.mkdirSync(dir);
     }
 
-    downloads.forEach((info) =>
+    entries.forEach((entry) =>
     {
-        const path = Path.resolve('./', '.files', info.path);
+        const path = Path.resolve('./', '.files', entry.path);
+        let promise = null;
 
         if(!(fs.existsSync(Path.dirname(path))))
         {
-            fs.mkdirSync(Path.dirname(path), {recursive: true});
+            fs.mkdirSync(Path.dirname(path), { recursive: true });
         }
 
-        const add = isExpired(path, options);
-        let promise = null;
-
-        if(add)
+        if(entry.url.startsWith("file://"))
         {
-            promise = downloadToFile(info.url, path);
+            promise = copyToFile(entry.url, path);
         }
         else
         {
-            promise = new Promise((resolve, reject) =>
+            const add = isExpired(path, options);
+
+            if(add)
             {
-                resolve(path);
-            });
+                promise = downloadToFile(entry.url, path);
+            }
+            else
+            {
+                promise = new Promise((resolve, reject) =>
+                {
+                    resolve(path);
+                });
+            }
         }
 
         promises.push(promise);
@@ -206,7 +224,7 @@ export default async function performValidation(locality, type, fromFormat, toFo
         fileEntries.push({url: file, path: filePath });
     });
 
-    return download([
+    return getFiles([
         { url: sourceURL,    path: entryInfo.filePath     },
         { url: filterURL,    path: filterInfo.filePath    },
         { url: schemaURL,    path: schemaInfo.filePath    },
@@ -215,11 +233,13 @@ export default async function performValidation(locality, type, fromFormat, toFo
         options)
     .then(async (downloads) =>
     {
+        console.log(JSON.stringify(downloads, null, 4));
         const sourceDownload    = downloads[0];
         const filterDownload    = downloads[1];
         const schemaDownload    = downloads[2];
         const validatorDownload = downloads[3];
 
+        console.log(filterDownload);
         const filterModule = await import(filterDownload);
         const filter       = new filterModule.default;
         const source       = readJSONFromFile(sourceDownload);
