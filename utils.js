@@ -238,17 +238,15 @@ export default async function performValidation(locality, type, fromFormat, toFo
         options)
     .then(async (downloads) =>
     {
-        console.log(JSON.stringify(downloads, null, 4));
         const sourceDownload    = downloads[0];
         const filterDownload    = downloads[1];
         const schemaDownload    = downloads[2];
         const validatorDownload = downloads[3];
 
-        console.log(filterDownload);
-        const filterModule = await import(filterDownload);
+        const filterModule = await import("file://" + filterDownload);
         const filter       = new filterModule.default;
         const source       = readJSONFromFile(sourceDownload);
-        const {validate}   = await import(validatorDownload);
+        const {validate}   = await import("file://" + validatorDownload);
         const schema       = readJSONFromFile(schemaDownload);
 
         data["source"] = source;
