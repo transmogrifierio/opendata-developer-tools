@@ -6,8 +6,9 @@ import Getopt from 'node-getopt';
 function main(argv)
 {
     const getopt = new Getopt([
-        [ 'c', 'clear-cache',        'delete the .files directory'],
-        [ 'f', 'force-download=ARG+', 'do not check timestamp for files [all,data,filters,schemas,validators'],
+        [ 'c', 'clear-cache',         'delete the .files directory'],
+        [ 'f', 'force-download=ARG+', 'do not check timestamp for files [all,data,filters,schemas,validators]'],
+        [ 'p', 'print',               'print the result'],
         [ '', 'help']
     ]).bindHelp();
 
@@ -67,12 +68,21 @@ function main(argv)
     performValidation(locality, type, fromFormat, toFormat, language, databaseFile, options)
     .then((data) =>
     {
-        console.log(`${data.messages.length} messages`);
-
-        data.messages.forEach((message) =>
+        if(opt.options.hasOwnProperty("print"))
         {
-            console.log(`${message.level} : ${message.message}`);
-        });
+            const str = JSON.stringify(data, null, 4);
+
+            console.log(str);
+        }
+        else
+        {
+            console.log(`${data.messages.length} messages`);
+
+            data.messages.forEach((message) =>
+            {
+                console.log(`${message.level} : ${message.message}`);
+            });
+        }
     })
     .catch((error) =>
     {

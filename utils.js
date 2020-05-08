@@ -243,14 +243,15 @@ export default async function performValidation(locality, type, fromFormat, toFo
         const schemaDownload    = downloads[2];
         const validatorDownload = downloads[3];
 
+        // Windows requires the file:// part... sigh.
         const filterModule = await import("file://" + filterDownload);
         const filter       = new filterModule.default;
         const source       = readJSONFromFile(sourceDownload);
         const {validate}   = await import("file://" + validatorDownload);
         const schema       = readJSONFromFile(schemaDownload);
 
-        data["source"] = source;
-        data["schema"] = schema;
+        data["source"]   = source;
+        data["schema"]   = schema;
         data["validate"] = validate;
 
         const filteredData = filter.filter(data.source);
