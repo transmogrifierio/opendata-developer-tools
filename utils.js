@@ -196,7 +196,7 @@ function getFiles(entries, options)
     return Promise.all(promises);
 }
 
-export default async function performValidation(locality, type, fromFormat, toFormat, language, databaseFile, options)
+export default async function performValidation(options, locality, type, fromFormat, toFormat, language, databaseFile, sourceURL, filterURL, schemaURL)
 {
     if(!(fs.existsSync(databaseFile)))
     {
@@ -209,19 +209,62 @@ export default async function performValidation(locality, type, fromFormat, toFo
     const validatorInfo = getValidatorPath(toFormat);
     const filesInfo     = getFilesPath(language);
     const database      = readJSONFromFile(databaseFile);
-    const entry         = jasonpath.query(database, entryInfo.path)[0];
-    const filterEntry   = jasonpath.query(entry, filterInfo.path)[0].url;
-    const schemaURL     = jasonpath.query(database, schemaInfo.path)[0];
+    const entry         = jasonpath.query(database, entryInfo.path);
     const validatorURL  = jasonpath.query(database, validatorInfo.path)[0];
     const files         = jasonpath.query(database, filesInfo.path)[0];
-    const sourceURL     = entry.url;
-    const filterURL     = filterEntry;
     const data          = {};
     const fileEntries   = [];
 
+    if(!(filterURL))
+    {
+        if(entry.length > 0)
+        {
+            const filterEntry = jasonpath.query(entry[0], filterInfo.path);
+
+            if(filterEntry.length > 0)
+            {
+                filterURL = filterEntry[0].url
+            }
+            else
+            {
+                throw "no filter set 1"
+            }
+        }
+        else
+        {
+            throw "no filter set 2"
+        }
+    }
+
+    if(!(schemaURL))
+    {
+        const schemaEntry = jasonpath.query(database, schemaInfo.path);
+
+        if(schemaEntry.length > 0)
+        {
+            schemaURL = schemaEntry[0];
+        }
+        else
+        {
+            throw "no schema set";
+        }
+    }
+
+    if(!(sourceURL))
+    {
+        if(entry.length > 0)
+        {
+            sourceURL = entry[0].url;
+        }
+        else
+        {
+            throw "no filter set"
+        }
+    }
+
     files.forEach((file) =>
     {
-        const parts = URL.parse(file);
+        const parts  = URL.parse(file);
         let filePath = parts.path;
 
         filePath = filePath.substring(filePath.lastIndexOf("/") + 1);
