@@ -16,7 +16,24 @@ selected the inputs, simply hit the verify button and another window will displa
 output data and any warnings or errors that have been generated along with the path to the error.
 
 **Optionally** you can run the program using additional command line arguments with 
-- $npm start -- --locality [location] --type [schema] --from [original format] --to [filter format] --lang [language]
+- [ 'c', 'clear-cache',         'delete the .files directory'],
+- [ 'f', 'force-download=ARG+', 'do not check timestamp for files [all,data,filters,schemas,validators]'],
+- [ 'p', 'print',               'print the result'],
+- [ 'd', 'database=ARG',        'database file'],
+- [ '',  'locality=ARG',        'the locality in the database'],
+- [ '',  'type=ARG',            'the type'],
+- [ '',  'from=ARG',            'from format'],
+- [ '',  'to=ARG',              'to format'],
+- [ '',  'lang=ARG',            'language'],
+- [ '',  'source=ARG',          'source URL'],
+- [ '',  'filter=ARG',          'filter URL'],
+- [ '' , 'schema=ARG',          'schema URL'],
+- [ '',  'help',                'help']
+
+```
+Eg. $npm start -- --help
+Eg. $npm start -- --locality [location] --type [schema] --from [original format] --to [filter format] --lang [language] -f all
+```
 
 ## UI Components  
 OdenGui is separated into two windows and several components. These components are outlined below.
