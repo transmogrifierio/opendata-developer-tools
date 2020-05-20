@@ -1,4 +1,7 @@
-import {QWidget, QTextEdit, QGridLayout, QLabel, QPushButton, QIcon, WidgetEventTypes, QSize} from "@nodegui/nodegui";
+import {
+    QWidget, QTextEdit, QGridLayout, QLabel, QPushButton, QIcon, WidgetEventTypes, QSize
+} from "@nodegui/nodegui";
+
 import copyIcon from '../assets/copyIcon.png';
 
 class ArgumentBox extends QWidget {
@@ -29,16 +32,17 @@ class ArgumentBox extends QWidget {
     getArguments() {
         this.e.toPlainText();
     }
+
     updateArguments(input){
-        let args = "";
+        let args = "npm start ";
         if(input.location != null){
-            args += "\"" + input.location.getFullName() + "\" ";
+            args += "--locality \"" + input.location.getFullName() + "\" ";
         }
         if(input.dataset != null){
-            args += "\"" + input.dataset.schemaName + "\" ";
+            args += "--type \"" + input.dataset.schemaName + "\" ";
         }
         if(input.filter != null){
-            args += `${input.filter.inputType} ${input.filter.outputType} ${input.filter.language}`
+            args += `--from ${input.filter.inputType} --to ${input.filter.outputType} --lang ${input.filter.language}`
         }
         this.e.setText(args);
     }

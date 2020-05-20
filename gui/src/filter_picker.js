@@ -1,4 +1,6 @@
-import {Direction, FlexLayout, QGridLayout, QComboBox, QLabel, QWidget} from "@nodegui/nodegui";
+import {
+    QGridLayout, QComboBox, QLabel, QWidget
+} from "@nodegui/nodegui";
 
 const oden_index = require('./oden_index.js');
 

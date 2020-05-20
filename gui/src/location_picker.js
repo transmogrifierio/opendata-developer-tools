@@ -1,14 +1,8 @@
+import BackButton from "./back_Button";
+
 const oden_index = require('./oden_index.js');
-import backIcon from '../assets/arrow-left-11.png';
 import {
-    QWidget,
-    QPushButton,
-    FlexLayout,
-    WidgetEventTypes,
-    WidgetAttribute,
-    QScrollArea,
-    QIcon,
-    ScrollBarPolicy, QBoxLayout, QGridLayout, QSize
+    QWidget, QPushButton, WidgetEventTypes, WidgetAttribute, QScrollArea, ScrollBarPolicy, QBoxLayout, QGridLayout
 } from '@nodegui/nodegui';
 
 class LocationPicker extends QWidget{
@@ -25,44 +19,40 @@ class LocationPicker extends QWidget{
 
         this.area.setWidget(this.container);
         this.area.setObjectName('scrollArea');
-        this.backButton = new QPushButton();
-        this.backButton.setIcon(new QIcon(backIcon));
-        this.backButton.setIconSize(new QSize(20,20));
-        this.backButton.setObjectName("backBtn");
-        this.backButton.setFixedSize(40,40);
-       // this.backButton.setText('<');
-        this.backButton.addEventListener('clicked', ()=>{this.backButtonClick()});
-        this.layout.addWidget(this.backButton,0,0);
-        this.layout.addWidget(this.area,1,0,1,1);
+        this.backButton = new BackButton(index, this);
 
-        //oden_index.OdenOIndexJson
+        this.backButton.backButton.addEventListener('clicked', ()=>{this.backButtonClick()});
+        this.layout.addWidget(this.backButton,0,0);
+        this.layout.addWidget(this.area,1,0);
+
         this.index = index;
-        //Event listening
+
+        //List of custom events this widget will throw
         this.events = {
-            "locationClick":[],
-            "locationBack":[]
+            "locationClick":[], //Expects event listeners to take parameter (location)
+            "locationBack":[] //Expects event listeners to take no parameters
         };
 
 
         this.locations = [];
         this.current = null;
         this.setLocations(this.index.getRootLocations());
-
-        this.setStyleSheet(`
-            #backBtn{
-                background-color: #E9E8E6 ;
-            }
-        `);
     }
 
+
+    /**
+     * Populates the widget with a list of locations
+     * @param {Location|[]} locations list of
+     */
     setLocations(locations){
-        console.log("Setting location");
         this.clearLocations();
         for(let i = 0; i < locations.length; i++)  { this.addLocation(locations[i]); }
         this.container.repaint();
-        console.log("Location set");
     }
 
+    /**
+     * Clears the widget of all listed locations
+     */
     clearLocations(){
         for(let i = this.locations.length - 1; i >= 0; i--){
             //unsure whether to close or delete, so I will do both
@@ -72,6 +62,10 @@ class LocationPicker extends QWidget{
         this.locations = [];
     }
 
+    /**
+     * Adds a single location entry to the widget's list of locations
+     * @param location Location to add to list
+     */
     addLocation(location){
         let label = new QPushButton();
         label.setObjectName("labelBtn");
@@ -82,6 +76,13 @@ class LocationPicker extends QWidget{
         this.locations.push(label);
     }
 
+    /**
+     * Adds a custom event listener for the widget. Look at this.events for more
+     * info on what custom events were added
+     * Overrides QWidget.addEventListener
+     * @param event String to identify the event the function will subscribe to
+     * @param listener Function to execute when event occurs
+     */
     addEventListener(event, listener){
         if(!Object.keys(this.events).includes(event)){
             throw `LocationPicker does not have event '${event}'`;
@@ -90,8 +91,12 @@ class LocationPicker extends QWidget{
         }
     }
 
+    /**
+     * Fired when location is clicked in the UI. Runs all 'locationClick' event handlers and displays
+     * all of a location's children, if any.
+     * @param location Location that was clicked
+     */
     locationClick(location){
-        console.log("Location click,", location.name);
         this.current = location;
         this.events["locationClick"].forEach((e) => { e(location) });
         let children = this.index.getLocationChildren(location);
@@ -102,6 +107,10 @@ class LocationPicker extends QWidget{
         }
     }
 
+    /**
+     * Fired when the back button is clicked. Runs all 'locationBack' event handlers
+     * and moves one level up in the parent hierarchy
+     */
     backButtonClick(){
         if(this.current){
             this.current = this.index.getLocationParent(this.current);
@@ -118,15 +127,22 @@ class LocationPicker extends QWidget{
         this.events["locationBack"].forEach((e) => { e() });
     }
 
+    /**
+     * Returns the widget to it's default state
+     */
     reset(){
         this.current = null;
         this.setLocations(this.index.getRootLocations());
     }
 
+    /**
+     * Loads the location passsed to the widget from the command line arguments
+     * @param arg String list of command line arguments
+     */
     loadCmdArgument(arg){
         let loc = this.index.getLocationFromArgument(arg[0]);
         this.locationClick(loc);
     }
-}
+ }
 
 export default LocationPicker;

@@ -1,4 +1,6 @@
-import {QWidget, QTextEdit, QGridLayout, QLabel, QCheckBox, WidgetEventTypes} from "@nodegui/nodegui";
+import {
+    QWidget, QTextEdit, QGridLayout, QLabel, QCheckBox, WidgetEventTypes
+} from "@nodegui/nodegui";
 
 class FilterURLInput extends QWidget {
     constructor() {
@@ -18,17 +20,34 @@ class FilterURLInput extends QWidget {
         this.EventHandler();
     }
 
+    /**
+     * Get the contain of Schema URL
+     */
+
     getFilterURL() {
         this.e.toPlainText();
     }
+
+    /**
+     * Set the value of Schema URL to the new value
+     * @param text as a string.
+     */
 
     setFilterUrl(text) {
         this.e.setText(text);
     }
 
+    /**
+     * Clear the contain of Schema URL
+     */
+
     ResetInput() {
         this.e.clear();
     }
+
+    /**
+     * Hide the checkbox
+     */
 
     ResetCheckBox() {
         this.c.hide();
@@ -40,6 +59,10 @@ class FilterURLInput extends QWidget {
         result += updateLocationName +"/" +cmdArgments[1].replace(" ", "-")+ "JSON-to-JSON"+".js"
         this.e.setText(result)
     }
+
+    /**
+     * The method controls event handler. When a user inputs the information, the checkbox displays.
+     */
 
     EventHandler() {
         this.e.addEventListener(WidgetEventTypes.KeyPress, () => {

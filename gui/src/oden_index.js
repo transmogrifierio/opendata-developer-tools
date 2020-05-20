@@ -2,18 +2,17 @@ const jp = require('jsonpath');
 const fs = require('fs');
 
 class OdenIndex{
-    //
-    //Returns an array of locations that are located within the provided locaton
+    // Returns an array of locations that are located within the provided locaton
     getLocationChildren(location){
         throw "must override OdenIndex.getLocationChildren()";
     }
 
-    //Gets all datasets of the provided type. For example 'Public Art' would return an array of all Datasets of Public Art
+    // Gets all datasets of the provided type. For example 'Public Art' would return an array of all Datasets of Public Art
     getDatasets(dataType){
         throw "must override OdenIndex.getDatasets()";
     }
 
-    //Returns array of the highest level (largest) locations
+    // Returns array of the highest level (largest) locations
     getRootLocations(){
         throw "must override OdenIndex.getRootLocations()";
     }
@@ -25,10 +24,10 @@ class OdenIndex{
 
 class Dataset{
     constructor(schemaName, data, filters) {
-        //Key value pair, file-type:url
+        // Key value pair, file-type:url
         this.data = data;
         this.schemaName = schemaName;
-        //key value pair, input-file-type, filter array
+        // key value pair, input-file-type, filter array
         this.filters = filters;
     }
 }
@@ -50,7 +49,12 @@ class Location{
         this.datasets = datasets;
     }
 
+    /**
+     * Format's the locations path in a user friendly string
+     * @returns {string} formated name
+     */
     getFullName(){
+        // This parsing could be improved
         let result = this.path.substring(10).replace(/[\[\]&]+/g,"").replace(/[\"\.&]+/g,"/");
         if (result.endsWith("/")){
             result = result.substring(0, result.length - 1);
@@ -70,7 +74,7 @@ class OdenIndexJSON{
         this.data = JSON.parse(rawData);
     }
 
-    //Returns an array of locations that are located within the provided location
+    // Returns an array of locations that are located within the provided location
     getLocationChildren(location){
         let children = jp.query(this.data, location.path);
         let childrenList = [];
@@ -84,6 +88,13 @@ class OdenIndexJSON{
         return childrenList;
     }
 
+    /**
+     * Parses a location object from arguments
+     * @param name String name of location
+     * @param parent Location
+     * @param datasets Datasets of this location, null allowed
+     * @returns {Location} parsed Location
+     */
     parseLocation(name, parent, datasets){
         if(datasets){
             datasets = this.parseDatasets(datasets);
@@ -91,6 +102,13 @@ class OdenIndexJSON{
         return new Location(name, parent.path + `["${name}"]`, datasets);
     }
 
+    /**
+     * Parses a location's datasets from JSON
+     * Based on the schema of database.json, this function parses an object
+     * stored under the key named 'data'
+     * @param datasets String of Dataset in JSON format
+     * @returns {[]} Array of Datasets
+     */
     parseDatasets(datasets){
         let schemaKeyList = Object.keys(datasets);
         let sets = [];
@@ -102,6 +120,12 @@ class OdenIndexJSON{
         return sets;
     }
 
+    /**
+     * Parses the data formats and urls of a specific dataset
+     * @param data String of a Dataset's data in JSON format, all data under a specifc schema name
+     * within a location
+     * @returns {{}} Object with key/value pairs of data format / url
+     */
     parseData(data){
         let parsedData = {};
         let formats = Object.keys(data);
@@ -111,8 +135,14 @@ class OdenIndexJSON{
         return parsedData;
     }
 
-    //Triple nested loop here could be improved
+    /**
+     * Parses the available filters for a particular dataset
+     * @param data String of a Dataset's data in JSON format, all data under a specifc schema name
+     * within a location
+     * @returns {{}} Object with key/value pairs of input data format / Array of filters
+     */
     parseFilters(data){
+        //Triple nested loop here could be improved
         let filters = {}
         //For each file format this dataset is in
         for(let i = 0; i < Object.keys(data).length; i++){
@@ -134,7 +164,7 @@ class OdenIndexJSON{
         return filters;
     }
 
-    //Gets all datasets of the provided type. For example 'Public Art' would return an array of all Location with Datasets of Public Art
+    // Gets all datasets of the provided type. For example 'Public Art' would return an array of all Location with Datasets of Public Art
     getDatasets(dataType){
         let paths = jp.paths(this.data, `$..*[?(@.data['${dataType}'])]`);
         let locations = [];
@@ -145,14 +175,16 @@ class OdenIndexJSON{
         return locations;
     }
 
+    /**
+     * Gets the parent of a location
+     * @param location Location to find parent of
+     * @returns {Location|null} Parent of location, or null if location is a root location
+     */
     getLocationParent(location){
-        console.log("Searching for parent, path: ", location.path);
         let search = jp.paths(this.data, location.path)[0];
         search.splice(-1, 1);
-        console.log("search", search);
         //If this is a root location
         if(search.length == 2){
-            console.log("Found root location");
             return null;
         }
 
@@ -164,7 +196,7 @@ class OdenIndexJSON{
         return p;
     }
 
-    //Returns array of the highest level (largest) locations
+    // Returns array of the highest level (largest) locations
     getRootLocations(){
         let roots = Object.keys(this.data["filters"]);
         roots.splice(roots.indexOf("files"),1);
@@ -176,21 +208,26 @@ class OdenIndexJSON{
         return locations;
     }
 
+    /**
+     * Generates a location directly from command line arguments
+     * @param arg path to generate location from. ex: CA/BC
+     * @returns {Location} Location generated from arguments
+     */
     getLocationFromArgument(arg){
         let nodes = arg.split('/');
         nodes.unshift('$', 'filters');
-        console.log("nodes:", nodes);
         let path = jp.stringify(nodes);
         let locationJson = jp.query(this.data, path);
-        console.log("query results:", locationJson);
         locationJson = locationJson[0];
-
         let dataset = locationJson['data'] ? this.parseDatasets(locationJson['data']) : null;
-
         let location = new Location(nodes[nodes.length - 1], path, dataset);
         return location;
     }
 
+    /**
+     * Gets all schemas defined in the database
+     * @returns {{}} Object with key value pairs
+     */
     getSchemas(){
         const rawSchemas = jp.query(this.data, "$.schemas.*");
         const schemas = {};

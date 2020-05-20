@@ -5,7 +5,6 @@ import {
     QTreeWidgetItem
 } from "@nodegui/nodegui";
 
-
 class CustomMessage extends QWidget{
 
     constructor() {
@@ -51,13 +50,13 @@ class CustomMessage extends QWidget{
             this.warningArea.setText(0,'No Warnings');
         }
         else {
-            this.warningArea.setText(0,(w + ' Warning(s)'));
+            this.warningArea.setText(0, w + ' Warning(s)');
         }
         if (e === 0) {
             this.errorArea.setText(0,'No Errors');
         }
         else {
-            this.errorArea.setText(0,(e + ' Error(s)'));
+            this.errorArea.setText(0,e + ' Error(s)');
         }
     }
 }

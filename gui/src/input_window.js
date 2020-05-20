@@ -4,14 +4,12 @@ import {
     QWidget, WidgetEventTypes
 } from '@nodegui/nodegui';
 
-import CustomView from "./custom_view.js";
 import SchemaUrlInput from "./schema_URL_Input.js";
 import FilterURLInput  from "./filter_URL_Input.js";
 import VerifyButton from "./verify_Button";
 import LocationPicker from "./location_picker";
 import SchemaPicker from "./schema_picker";
 import OdenIndexJson, {OdenIndexJSON} from "./oden_index";
-import SearchBar from "./search_bar";
 import FilterPicker from './filter_picker';
 import ArgumentBox from "./argument_box";
 import SourceURLInput from "./source_url_input";
@@ -20,17 +18,8 @@ import ResetButton from "./reset_button";
 
 class InputWindow extends QMainWindow {
 
-    constructor(cmdArgments) {
+    constructor(cmdArgments, options) {
         super();
-        //testing... to be remove
-        if(cmdArgments){
-            console.log("locality arg: ", cmdArgments[0]);
-            console.log("type arg: ", cmdArgments[1]);
-            console.log("fromFormat arg: ", cmdArgments[2]);
-            console.log("toFormat arg: ", cmdArgments[3]);
-            console.log("language arg: ", cmdArgments[4]);
-        }
-
         const centralWidget = new QWidget();
         centralWidget.setObjectName("myroot");
         const layout = new QGridLayout();
@@ -53,9 +42,6 @@ class InputWindow extends QMainWindow {
         this.filterPicker = new FilterPicker();
         this.filterPicker.setObjectName("filter_selection");
         this.schemaURL= new SchemaUrlInput();
-       // this.schemaURL.setInlineStyle("padding: 200px");
-        //this.filterURl = new FilterURLInput();
-        //this.schemaURL.setInlineStyle("padding: 200px");
         this.filterURL = new FilterURLInput();
         this.sourceURL= new SourceURLInput();
         this.argumentBox = new ArgumentBox();
@@ -144,7 +130,7 @@ class InputWindow extends QMainWindow {
                     input.Override_Source = this.sourceURL.getSourceURL();
                 }
                 console.log("modified input", input);
-                this.verifyButton.verify( input);
+                this.verifyButton.verify(input, options);
             } catch (e) {
                 console.log(e);
             }
@@ -174,8 +160,8 @@ class InputWindow extends QMainWindow {
         layout.addWidget(this.filterURL,6,0,2,2)
         layout.addWidget(this.verifyButton,9,1, 3,1);
         layout.addWidget(this.resetButton,9,0, 3,1);
-        layout.addWidget(this.schemaSelect, 0, 0, 3,1);
-        layout.addWidget(this.locationSelect, 0, 1, 3,1);
+        layout.addWidget(this.schemaSelect, 0, 0, 2,1);
+        layout.addWidget(this.locationSelect, 0, 1, 2,1);
 
         layout.addWidget(this.argumentBox,8,0,2,2);
 
@@ -199,7 +185,7 @@ class InputWindow extends QMainWindow {
         `
         );
         this.show();
-        this.resize(1000,1000);
+        this.resize(1600,1000);
         global.this = this;
     }
 }

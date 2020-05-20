@@ -1,5 +1,6 @@
-
-import {QWidget, QTextEdit, QGridLayout, QLabel, QCheckBox, WidgetEventTypes} from "@nodegui/nodegui";
+import {
+    QWidget, QTextEdit, QGridLayout, QLabel, QCheckBox, WidgetEventTypes
+} from "@nodegui/nodegui";
 
 class SourceURLInput extends QWidget{
     constructor() {
@@ -18,18 +19,39 @@ class SourceURLInput extends QWidget{
 
         this.EventHandler();
     }
+    /**
+     * Get the contain of Schema URL
+     */
     getSourceURL(){
         this.e.toPlainText();
     }
+
+    /**
+     * Set the value of Schema URL to the new value
+     * @param text as a string.
+     */
+
     setSourceURL(text){
         this.e.setText(text);
     }
+
+    /**
+     * Clear the contain of Schema URL
+     */
+
     ResetInput(){
         this.e.clear();
     }
+
+    /**
+     * Hide the checkbox
+     */
     ResetCheckBox(){
         this.c.hide();
     }
+    /**
+     * The method controls event handler. When a user inputs the information, the checkbox displays.
+     */
     EventHandler(){
         this.e.addEventListener(WidgetEventTypes.KeyPress, () => {
             this.layout.addWidget(this.c, 0, 2);

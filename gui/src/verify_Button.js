@@ -1,91 +1,8 @@
-import DataWindow from "./dataWindow";
-//import {processStuff} from "./level2/index3"
+import Data_window from "./data_window";
 
-const { QWidget, QPushButton, FlexLayout, QGridLayout } = require('@nodegui/nodegui');
-
-//////////////////////////////////////
-const s = {
-    type: 'FeatureCollection',
-    name: 'PUBLIC_ART',
-    features: [
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] }
-    ]
-}
-
-const f = {
-    type: 'FeatureCollection',
-    features: [
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] },
-        { type: 'Feature', geometry: [Object], properties: [Object] }
-    ]
-}
-
-class data{
-    constructor(source, filtered) {
-        this.messages = []
-        this.filtered = filtered;
-        this.source = source;
-    }
-}
-const d = new data(s, f)
-class message {
-    constructor(level, mess, path) {
-        this.level = level;
-        this.message = mess;
-        this.path = path;
-    }
-}
-var i;
-for (i = 0; i < 100; i++) {
-    d.messages[i] = new message("Warning", "Hi, I am a warning", "features[21].properties");
-}
-d.messages[100] = new message("Error", "Uh Oh I am an Error", "features[1].properties");
-///////////////////////////////////////////////////////
+const {
+    QWidget, QPushButton, QGridLayout
+} = require('@nodegui/nodegui');
 
 
 class VerifyButton extends QWidget{
@@ -101,7 +18,12 @@ class VerifyButton extends QWidget{
         this.layout.addWidget(this.b,0,0);
     }
 
-    verify(input){
+    /**
+     * grab inputs from input_window and pass correct inputs for performValidation.
+     * @param input QMainWindow
+     * @param options String
+     */
+    verify(input, options){
         if(input.filter != null && input.filter != null && input.dataset != null){
             try{
                 let params = {
@@ -109,42 +31,83 @@ class VerifyButton extends QWidget{
                     type: input.dataset.schemaName,
                     fromFormat: input.filter.inputType,
                     toFormat: input.filter.outputType,
-                    language: input.filter.language
+                    language: input.filter.language,
+                    '--source': input.Override_Source,
+                    '--schema': input.Override_Schema,
+                    '--filter': input.Override_Filter
                 }
                 console.log("parameters", params);
-                this.performValidation(params)
+                this.performValidation(params, options)
             } catch(e){
                 console.log(e);
             }
         }
     }
 
-    performValidation(params){
+    /**
+     * perform child-process for index.js to output original-data, filtered-data, message, and warnings.
+     * @param params locality, type, from, to, language, source_url, schema_url, and filter_url
+     * @param options option-flags such as -c, -f, or --help
+     */
+    performValidation(params, options){
         const childProcess = require("child_process");
         const path = require("path");
-        console.log("locality type: " , params.locality)
-        console.log("schema type: " , params.type)
-        console.log("from type: " , params.fromFormat)
-        console.log("to type: " , params.toFormat)
-        console.log("language type: " , params.language)
-        const cp = childProcess.exec(`node --experimental-modules --experimental-json-modules ./index.js -p "${params.locality}" "${params.type}" ${params.fromFormat} ${params.toFormat} ${params.language} ./gui/src/db/database.json`,
-            {
-                cwd: `./${__dirname}../`
-            },
-            (error, stdout, stderr) =>
-            {
-                console.log(error);
-                const obj = JSON.parse(stdout);
-                this.dataWindow = new DataWindow();
-                this.dataWindow.DisplayMessages(obj);
-                this.dataWindow.show();
-                console.log(stderr);
-            });
-        cp.on("exit", (code, signal) =>
-        {
-            console.log("Exited", {code: code, signal: signal});
-        });
-        cp.on("error", console.error.bind(console));
+        if(options){
+            let cmd = `node --experimental-modules --experimental-json-modules ./index.js `;
+            cmd += `-p ${options} `;
+            cmd += `--locality "${params.locality}" `;
+            cmd += `--type "${params.type}" --from ${params.fromFormat} `;
+            cmd += `--to ${params.toFormat} `;
+            cmd += `--lang ${params.language} `;
+            cmd += `-d ./gui/src/db/database.json `;
+
+            for(let override of ['--source', '--schema', '--filter']){
+                if(params[override]){
+                    cmd += ` ${override} ${params[override]}`
+                }
+            }
+
+            const cp = childProcess.exec(cmd,
+                {
+                    cwd: `./${__dirname}../`
+                },
+                (error, stdout, stderr) =>
+                {
+                    console.log(error);
+                    console.log("flag:", options, "has successfully passed-in.");
+                    const obj = JSON.parse(stdout);
+                    this.dataWindow = new Data_window();
+                    this.dataWindow.DisplayMessages(obj);
+                    this.dataWindow.show();
+                    console.log(stderr);
+                });
+        } else {
+            let cmd = `node --experimental-modules --experimental-json-modules ./index.js -p `;
+            cmd += `--locality "${params.locality}" `;
+            cmd += `--type "${params.type}" --from ${params.fromFormat} `;
+            cmd += `--to ${params.toFormat} `;
+            cmd += `--lang ${params.language} `;
+            cmd += `-d ./gui/src/db/database.json `;
+
+            for(let override of ['--source', '--schema', '--filter']){
+                if(params[override]){
+                    cmd += ` ${override} ${params[override]}`
+                }
+            }
+            const cp = childProcess.exec(cmd,
+                {
+                    cwd: `./${__dirname}../`
+                },
+                (error, stdout, stderr) =>
+                {
+                    console.log(error);
+                    const obj = JSON.parse(stdout);
+                    this.dataWindow = new Data_window();
+                    this.dataWindow.DisplayMessages(obj);
+                    this.dataWindow.show();
+                    console.log(stderr);
+                });
+        }
 
     }
 

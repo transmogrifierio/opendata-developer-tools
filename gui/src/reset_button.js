@@ -1,6 +1,4 @@
-import DataWindow from "./dataWindow";
-
-const { QWidget, QPushButton, FlexLayout, QGridLayout } = require('@nodegui/nodegui');
+const { QWidget, QPushButton, QGridLayout } = require('@nodegui/nodegui');
 
 class ResetButton extends QWidget{
     constructor() {
