@@ -1,19 +1,19 @@
 {
-  "name": "transformers",
+  "name": "ODENDesktopApp",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "author": "",
-  "license": "ISC",
-  "type": "module",
+  "license": "",
+  "scripts": {
+    "build": "webpack -p",
+    "start": "cross-env NODE_OPTIONS='--experimental-modules' webpack && qode ./dist/index.js",
+    "debug": "webpack && qode --inspect ./dist/index.js"
+  },
   "dependencies": {
     "@nodegui/nodegui": "^0.19.0",
     "accurate-search": "^1.2.6",
-    "cross-env": "^7.0.2",
     "axios": "^0.19.2",
+    "cross-env": "^7.0.2",
     "jsonpath": "^1.0.2",
     "moment": "^2.24.0",
     "node-getopt": "^0.3.2",
