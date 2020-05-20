@@ -34,7 +34,7 @@ class ArgumentBox extends QWidget {
     }
 
     updateArguments(input){
-        let args = "npm start ";
+        let args = "npm start -- ";
         if(input.location != null){
             args += "--locality \"" + input.location.getFullName() + "\" ";
         }
