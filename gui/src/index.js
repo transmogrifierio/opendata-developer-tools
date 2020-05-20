@@ -47,7 +47,14 @@ if (Object.keys(opt.options).length===0){
         const downloads = opt.options["force-download"];
         option_flag += "-f " + downloads;
     }
-
+    if(opt.options.hasOwnProperty("database"))
+    {
+        option_flag += "-d " + opt.options.database;
+    }
+    else
+    {
+        option_flag += "-d " + "./gui/src/db/database.json ";
+    }
     // provided info from arguments
     if(opt.options.hasOwnProperty("locality") ||
         opt.options.hasOwnProperty("type") ||
@@ -99,6 +106,7 @@ if (Object.keys(opt.options).length===0){
         {
             throw "--lang is required";
         }
+
         // npm start -- --locality "CA/BC/Metro Vancouver Regional District/New Westminster" --type "Public Art"
         // -from json --to json --lang ES6 -f all -f filter
         new InputWindow(argv_array, option_flag);

@@ -59,7 +59,6 @@ class VerifyButton extends QWidget{
             cmd += `--type "${params.type}" --from ${params.fromFormat} `;
             cmd += `--to ${params.toFormat} `;
             cmd += `--lang ${params.language} `;
-            cmd += `-d ./gui/src/db/database.json `;
 
             for(let override of ['--source', '--schema', '--filter']){
                 if(params[override]){
