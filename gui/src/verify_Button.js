@@ -107,9 +107,7 @@ class VerifyButton extends QWidget{
                     console.log(stderr);
                 });
         }
-
     }
-
 }
 
 export default VerifyButton;

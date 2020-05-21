@@ -1,14 +1,10 @@
-import {
-    QGridLayout, QComboBox, QLabel, QWidget
-} from "@nodegui/nodegui";
+import {QGridLayout, QComboBox, QLabel, QWidget} from "@nodegui/nodegui";
 
-const oden_index = require('./oden_index.js');
 
 class FilterPicker extends QWidget {
     constructor() {
         super();
         this.setLayout(new QGridLayout());
-
 
         this.inputBox = new QComboBox();
         this.inputBox.setObjectName("inputBox");

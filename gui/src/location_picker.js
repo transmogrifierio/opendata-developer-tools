@@ -1,9 +1,6 @@
 import BackButton from "./back_Button";
-
+import {QWidget, QPushButton, WidgetEventTypes, WidgetAttribute, QScrollArea, ScrollBarPolicy, QBoxLayout, QGridLayout} from '@nodegui/nodegui';
 const oden_index = require('./oden_index.js');
-import {
-    QWidget, QPushButton, WidgetEventTypes, WidgetAttribute, QScrollArea, ScrollBarPolicy, QBoxLayout, QGridLayout
-} from '@nodegui/nodegui';
 
 class LocationPicker extends QWidget{
     constructor(index) {
@@ -15,7 +12,6 @@ class LocationPicker extends QWidget{
         this.container = new QWidget();
         this.container.setLayout(new QBoxLayout(2));
         this.container.setObjectName("contentContainer");
-
 
         this.area.setWidget(this.container);
         this.area.setObjectName('scrollArea');
@@ -55,9 +51,7 @@ class LocationPicker extends QWidget{
      */
     clearLocations(){
         for(let i = this.locations.length - 1; i >= 0; i--){
-            //unsure whether to close or delete, so I will do both
             this.locations[i].close();
-            //delete this.locations[i];
         }
         this.locations = [];
     }

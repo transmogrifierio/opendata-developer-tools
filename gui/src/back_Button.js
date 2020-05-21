@@ -1,10 +1,8 @@
-const oden_index = require('./oden_index.js');
-
-import backIcon from '../assets/arrow-left-11.png';
-
 import {
     QWidget, QPushButton, QIcon, QGridLayout, QSize, QLabel
 } from '@nodegui/nodegui';
+
+import backIcon from '../assets/arrow-left-11.png';
 
 class BackButton extends QWidget{
     /**

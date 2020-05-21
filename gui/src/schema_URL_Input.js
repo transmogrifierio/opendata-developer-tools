@@ -19,10 +19,10 @@ class SchemaURLInput extends QWidget {
         this.EventHandler();
 
     }
+
     /**
      * Get the contain of Schema URL
      */
-
     getSchemaURL() {
         this.e.toPlainText();
     }
@@ -31,8 +31,6 @@ class SchemaURLInput extends QWidget {
      * Set the value of Schema URL to the new value
      * @param text as a string.
      */
-
-
     setSchemaURL(text) {
         this.e.setText(text);
     }
@@ -40,7 +38,6 @@ class SchemaURLInput extends QWidget {
     /**
      * Clear the contain of Schema URL
      */
-
     ResetInput() {
         this.e.clear();
     }
@@ -48,12 +45,8 @@ class SchemaURLInput extends QWidget {
     /**
      * Hide the checkbox
      */
-
     ResetCheckBox() {
-
         this.c.hide();
-
-
     }
 
     loadCmdArgument(cmdArgments) {
@@ -62,6 +55,7 @@ class SchemaURLInput extends QWidget {
         result += cmdArgments[1] + "." + cmdArgments[2]
         this.setSchemaURL(result)
     }
+
     /**
      * The method controls event handler. When a user inputs the information, the checkbox displays.
      */

@@ -8,7 +8,6 @@ import SearchBar from "./search_bar";
 class SchemaPicker extends QWidget{
     constructor(index) {
         super();
-
         this.setLayout(new QGridLayout());
         this.area = new QScrollArea();
 
@@ -17,7 +16,6 @@ class SchemaPicker extends QWidget{
         this.container = new QWidget();
         this.container.setLayout(new QBoxLayout(2));
         this.container.setObjectName("contentContainer");
-
 
         this.searchBar= new SearchBar(index,this);
         this.searchBar.addEventListener("search", (list)=>{
@@ -120,7 +118,6 @@ class SchemaPicker extends QWidget{
         this.current = schema;
         //Parameters passed = schema name, url
         this.events["schemaClick"].forEach((e) => { e(schema, this.allSchemas[schema]) });
-
     }
 
     /**

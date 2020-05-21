@@ -38,7 +38,6 @@ class Filter {
         this.inputType = inputType;
         this.outputType = outputType;
         this.language = language;
-
     }
 }
 
@@ -69,7 +68,6 @@ class Location{
 class OdenIndexJSON{
 
     constructor(path) {
-
         let rawData = fs.readFileSync(path, 'utf8');
         this.data = JSON.parse(rawData);
     }
@@ -142,17 +140,17 @@ class OdenIndexJSON{
      * @returns {{}} Object with key/value pairs of input data format / Array of filters
      */
     parseFilters(data){
-        //Triple nested loop here could be improved
+        // Triple nested loop here could be improved
         let filters = {}
-        //For each file format this dataset is in
+        // For each file format this dataset is in
         for(let i = 0; i < Object.keys(data).length; i++){
             let current = Object.keys(data)[i];
             filters[current] = jp.query(data, `$.${current}..filters`);
             let filtersByFormat = [];
-            //for each output type found amoung this input type's filter
+            // For each output type found amoung this input type's filter
             for(let j = 0; j < filters[current].length; j++){
                 let outputType = Object.keys(filters[current][j])[0];
-                //for each filter (We now know input and output type)
+                // For each filter (We now know input and output type)
                 for(let k = 0; k < filters[current][j][outputType].length; k++){
                     let language = filters[current][j][outputType][k]['language'];
                     let url = filters[current][j][outputType][k]['url'];

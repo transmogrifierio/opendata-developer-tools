@@ -1,11 +1,6 @@
-import {
-    QWidget,
-    QGridLayout,
-    QTreeWidget,
-    QTreeWidgetItem
-} from "@nodegui/nodegui";
+import {QWidget, QGridLayout, QTreeWidget, QTreeWidgetItem} from "@nodegui/nodegui";
 
-class CustomMessage extends QWidget{
+class CustomMessage extends QWidget {
 
     constructor() {
         super();
@@ -46,16 +41,16 @@ class CustomMessage extends QWidget{
                 this.errorArea.addChild(err);
             }
         });
+
         if (w === 0) {
             this.warningArea.setText(0,'No Warnings');
-        }
-        else {
+        } else {
             this.warningArea.setText(0, w + ' Warning(s)');
         }
+
         if (e === 0) {
             this.errorArea.setText(0,'No Errors');
-        }
-        else {
+        } else {
             this.errorArea.setText(0,e + ' Error(s)');
         }
     }

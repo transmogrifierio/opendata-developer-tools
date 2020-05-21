@@ -13,7 +13,7 @@ class ResetButton extends QWidget{
         this.layout.addWidget(this.b,0,0);
     }
 
-    resetAll(widgetList){
+    resetAll(widgetList) {
         widgetList.forEach((item)=>{ item.reset() });
     }
 

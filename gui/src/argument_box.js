@@ -18,7 +18,6 @@ class ArgumentBox extends QWidget {
         this.e.setObjectName("arguments");
 
         this.b = new QPushButton();
-        //this.b.setText("COPY");
         this.b.setIcon(new QIcon(copyIcon));
         this.b.setIconSize(new QSize(30,30));
         this.b.setFixedSize(40,40);

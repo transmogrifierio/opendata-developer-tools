@@ -34,27 +34,25 @@ if (Object.keys(opt.options).length===0){
     // npm start -- [options]
     let option_flag = "";
 
-    if(opt.options.hasOwnProperty("help")){
+    if(opt.options.hasOwnProperty("help")) {
         option_flag += "--help "
     }
-    if(opt.options.hasOwnProperty("clear-cache"))
-    {
+
+    if(opt.options.hasOwnProperty("clear-cache")) {
         option_flag += "-c ";
     }
 
-    if(opt.options.hasOwnProperty("force-download"))
-    {
+    if(opt.options.hasOwnProperty("force-download")) {
         const downloads = opt.options["force-download"];
-        option_flag += "-f " + downloads;
+        option_flag += "-f " + downloads + " ";
     }
-    if(opt.options.hasOwnProperty("database"))
-    {
+
+    if(opt.options.hasOwnProperty("database")) {
         option_flag += "-d " + opt.options.database;
-    }
-    else
-    {
+    } else {
         option_flag += "-d " + "./gui/src/db/database.json ";
     }
+
     // provided info from arguments
     if(opt.options.hasOwnProperty("locality") ||
         opt.options.hasOwnProperty("type") ||
@@ -62,48 +60,33 @@ if (Object.keys(opt.options).length===0){
         opt.options.hasOwnProperty("to") ||
         opt.options.hasOwnProperty("lang")) {
 
-        if(opt.options.hasOwnProperty("locality"))
-        {
+        if(opt.options.hasOwnProperty("locality")) {
             argv_array.push(opt.options.locality);
-        }
-        else
-        {
+        } else {
             throw "--locality is required";
         }
 
-        if(opt.options.hasOwnProperty("type"))
-        {
+        if(opt.options.hasOwnProperty("type")) {
             argv_array.push(opt.options.type); // "Public Art"
-        }
-        else
-        {
+        } else {
             throw "--type is required";
         }
 
-        if(opt.options.hasOwnProperty("from"))
-        {
+        if(opt.options.hasOwnProperty("from")) {
             argv_array.push(opt.options.from); // json
-        }
-        else
-        {
+        } else {
             throw "--from is required";
         }
 
-        if(opt.options.hasOwnProperty("to"))
-        {
+        if(opt.options.hasOwnProperty("to")) {
             argv_array.push(opt.options.to); // json
-        }
-        else
-        {
+        } else {
             throw "--to is required";
         }
 
-        if(opt.options.hasOwnProperty("lang"))
-        {
+        if(opt.options.hasOwnProperty("lang")) {
             argv_array.push(opt.options.lang); // ES6
-        }
-        else
-        {
+        } else {
             throw "--lang is required";
         }
 
@@ -117,28 +100,4 @@ if (Object.keys(opt.options).length===0){
     }
 
 
-}
-
-class data{
-    constructor() {
-        this.messages = []
-    }
-}
-const d = new data()
-class message {
-    constructor(level, mess) {
-        this.level = level
-        this.message = mess
-    }
-}
-var i;
-for (i = 0; i < 100; i++) {
-    d.messages[i] = new message("Warning", "Hi, I am a warning");
-}
-d.messages[100] = new message("Error", "Uh Oh I am an Error");
-
-class Transformer {
-    transform(message) {
-        return message.toLowerCase();
-    }
 }

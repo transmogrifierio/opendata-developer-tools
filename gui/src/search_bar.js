@@ -6,7 +6,6 @@ import backIcon from '../assets/arrow-left-11.png';
 import searchIcon from '../assets/searchIcon1.png';
 
 const AccurateSearch = require('accurate-search');
-const oden_index = require('./oden_index.js');
 
 class SearchBar extends QWidget{
     constructor(index,schemaPicker) {
@@ -15,9 +14,9 @@ class SearchBar extends QWidget{
         this.schemaPicker = schemaPicker;
         this.setLayout(new QGridLayout());
 
-        //List of custom events this widget will throw
+        // List of custom events this widget will throw
         this.events = {
-            "search":[] //Expects event listeners to take a single string array parameter (results)
+            "search":[] // Expects event listeners to take a single string array parameter (results)
         }
 
         this.homeButton = new QPushButton();
@@ -100,7 +99,6 @@ class SearchBar extends QWidget{
             results.push(options[id]);
         }
         this.events["search"].forEach((e) => { e(results) });
-
     }
 }
 

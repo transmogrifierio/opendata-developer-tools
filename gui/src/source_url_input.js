@@ -19,6 +19,7 @@ class SourceURLInput extends QWidget{
 
         this.EventHandler();
     }
+
     /**
      * Get the contain of Schema URL
      */
@@ -30,7 +31,6 @@ class SourceURLInput extends QWidget{
      * Set the value of Schema URL to the new value
      * @param text as a string.
      */
-
     setSourceURL(text){
         this.e.setText(text);
     }
@@ -38,7 +38,6 @@ class SourceURLInput extends QWidget{
     /**
      * Clear the contain of Schema URL
      */
-
     ResetInput(){
         this.e.clear();
     }
@@ -49,6 +48,7 @@ class SourceURLInput extends QWidget{
     ResetCheckBox(){
         this.c.hide();
     }
+
     /**
      * The method controls event handler. When a user inputs the information, the checkbox displays.
      */

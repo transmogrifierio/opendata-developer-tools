@@ -1,20 +1,14 @@
-import {
-    QGridLayout,
-    QMainWindow,
-    QWidget, WidgetEventTypes
-} from '@nodegui/nodegui';
-
+import {QGridLayout, QMainWindow, QWidget, WidgetEventTypes} from '@nodegui/nodegui';
 import SchemaUrlInput from "./schema_URL_Input.js";
 import FilterURLInput  from "./filter_URL_Input.js";
 import VerifyButton from "./verify_Button";
 import LocationPicker from "./location_picker";
 import SchemaPicker from "./schema_picker";
-import OdenIndexJson, {OdenIndexJSON} from "./oden_index";
+import {OdenIndexJSON} from "./oden_index";
 import FilterPicker from './filter_picker';
 import ArgumentBox from "./argument_box";
 import SourceURLInput from "./source_url_input";
 import ResetButton from "./reset_button";
-
 
 class InputWindow extends QMainWindow {
 
@@ -60,8 +54,7 @@ class InputWindow extends QMainWindow {
                         this.input.dataset = dataset;
                     }
                 });
-            }
-            else if(location.datasets){
+            } else if(location.datasets) {
                 this.schemaSelect.setDatasets(location.datasets);
             }
             this.argumentBox.updateArguments(this.input);
@@ -107,7 +100,6 @@ class InputWindow extends QMainWindow {
             this.argumentBox.updateArguments(this.input);
         });
 
-
         this.filterPicker.addEventListener("filterSelect", (filter)=>{
             this.input.filter = filter;
             this.filterURL.setFilterUrl(filter.url);
@@ -134,7 +126,6 @@ class InputWindow extends QMainWindow {
             } catch (e) {
                 console.log(e);
             }
-
         });
 
         this.resetButton.b.addEventListener(WidgetEventTypes.MouseButtonPress, ()=>{
@@ -146,6 +137,7 @@ class InputWindow extends QMainWindow {
             this.input.filter = null;
             this.argumentBox.updateArguments(this.input);
         });
+
         if(cmdArgments){
             this.schemaURL.loadCmdArgument(cmdArgments);
             this.filterURL.loadCmdArgument(cmdArgments);
@@ -154,6 +146,7 @@ class InputWindow extends QMainWindow {
             this.schemaSelect.loadCmdArgument(cmdArgments);
             this.filterPicker.loadCmdArgument(cmdArgments);
         }
+
         layout.addWidget(this.sourceURL,7,0,2,2)
         layout.addWidget(this.filterPicker, 3,0,2,2);
         layout.addWidget(this.schemaURL, 5, 0, 2, 2);
@@ -162,7 +155,6 @@ class InputWindow extends QMainWindow {
         layout.addWidget(this.resetButton,9,0, 3,1);
         layout.addWidget(this.schemaSelect, 0, 0, 2,1);
         layout.addWidget(this.locationSelect, 0, 1, 2,1);
-
         layout.addWidget(this.argumentBox,8,0,2,2);
 
         this.setCentralWidget(centralWidget);

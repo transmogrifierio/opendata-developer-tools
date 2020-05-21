@@ -4,17 +4,17 @@
     "json":
     {
       "Public Art": "https://raw.githubusercontent.com/transmogrifierio/opendata-schemas/master/Public-Art.json",
-      "Dummy Schema": "dummy address",
-      "Fake Schema": "fake address",
-      "Transportation Schema": "testing",
-      "Construction Fake": "testing",
-      "School Schema": "testing",
-      "Transportation Test": "Testing",
-      "Transportation Fake": "testing",
-      "Construction Test": "testing",
-      "School Test": "testing",
-      "Transportation Dummy": "Testing",
-      "Testing": "Testing"
+      "Accessible Public Washrooms": "dummy address",
+      "Active Transportation": "fake address",
+      "Beaches": "testing",
+      "Bite Routes": "testing",
+      "Building Age": "testing",
+      "Bus Stops": "Testing",
+      "City Boundaries": "testing",
+      "Intersection": "testing",
+      "Park Trails": "testing",
+      "SkyTrain Stations": "Testing",
+      "Speed Signs": "Testing"
 
     }
   },
@@ -120,7 +120,7 @@
           }
         }
       }
-    },"test": {}, "testing": {},"testing2": {}, "testing3": {}, "testing4": {}, "testing5": {}, "testing6": {}, "testing7": {},
-     "testing8": {},"testing9": {},"testing10": {}
+    },"FR": {}, "GB": {},"TW": {}, "AT": {}, "RU": {}, "DE": {}, "CN": {}, "KR": {},
+     "ES": {},"CH": {},"JP": {}
   }
 }

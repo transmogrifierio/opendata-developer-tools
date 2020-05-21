@@ -1,9 +1,4 @@
-import {
-    QGridLayout,
-    QMainWindow,
-    QWidget,
-    QLabel
-} from '@nodegui/nodegui';
+import {QGridLayout, QMainWindow, QWidget, QLabel} from '@nodegui/nodegui';
 
 import CustomMessage from "./messages.js";
 import Data_view from "./data_view.js";
