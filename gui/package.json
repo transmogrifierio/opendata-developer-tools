@@ -15,7 +15,7 @@
     "axios": "^0.19.2",
     "cross-env": "^7.0.2",
     "jsonpath": "^1.0.2",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "node-getopt": "^0.3.2",
     "path": "^0.12.7"
   },
